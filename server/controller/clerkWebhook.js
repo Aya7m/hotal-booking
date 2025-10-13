@@ -5,7 +5,7 @@ export const clerkWebHook=async(req,res)=>{
     try {
         
         // create svex instance with clerk web secrit
-        const whook=new Webhook(process.env.CLERK_WEBHOOK_SECRITE)
+        const whook=new Webhook(process.env.CLERK_WEBHOOK_SECRET)
 
         // getting header
         const headers={
