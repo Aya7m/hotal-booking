@@ -15,12 +15,13 @@ connection_db()
 
 app.use(cors())
 
-// ✅ لازم نضيفها قبل express.json()
+// ✅ 1. لازم webhook route ييجي قبل أي middleware تاني بيتعامل مع body
 app.post('/api/clerk', bodyParser.raw({ type: 'application/json' }), clerkWebHook)
 
-// ✅ بعدين نستخدم json لكل الـ routes العادية
+// ✅ 2. بعدين json parsing لباقي الـ routes
 app.use(express.json())
 
+// ✅ 3. وبعدين clerkMiddleware
 app.use(clerkMiddleware())
 
 app.get('/', (req, res) => res.send('Hello World!'))
