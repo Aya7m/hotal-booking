@@ -14,18 +14,11 @@ const port = process.env.PORT || 3000
 connection_db()
 
 app.use(cors())
-
-app.use(
-  express.json({
-    verify: (req, res, buf) => {
-      req.rawBody = buf
-    },
-  })
-)
+app.use(express.json())
 
 app.use(clerkMiddleware())
 
-app.post('/api/clerk', clerkWebHook)
+app.use('/api/clerk', clerkWebHook)
 
 // ✅ 3. وبعدين clerkMiddleware
 app.use(clerkMiddleware())

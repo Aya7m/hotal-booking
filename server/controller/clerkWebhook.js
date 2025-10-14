@@ -5,6 +5,10 @@ export const clerkWebHook = async (req, res) => {
   try {
     console.log("📩 Webhook received from Clerk!");
 
+    const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
+
+
+    
     // 🔒 تحقّق من التوقيع باستخدام المفاتيح الخاصة بالـ headers
     const headers = {
       "svix-id": req.headers["svix-id"],
@@ -12,14 +16,8 @@ export const clerkWebHook = async (req, res) => {
       "svix-signature": req.headers["svix-signature"],
     };
 
-    const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET);
-
-    // ⚠️ استخدمي الـ rawBody اللي حفظناه من express.json()
-    const payload = req.rawBody.toString();
-
-    // ✅ تحقق من التوقيع وفكّي البيانات
-    const evt = await whook.verify(payload, headers);
-    const { data, type } = evt;
+   await whook.verify(JSON.stringify(req.body), headers);
+    const { data, type } = req.body;
 
     const userData = {
       _id: data.id,
