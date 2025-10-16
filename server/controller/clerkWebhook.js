@@ -19,28 +19,43 @@ export const clerkWebHook = async (req, res) => {
    await whook.verify(JSON.stringify(req.body), headers);
     const { data, type } = req.body;
 
-    const userData = {
+    
+
+    switch (type) {
+      case "user.created":{
+
+        const userData = {
       _id: data.id,
       email : data.email_addresses?.[0]?.email_address || "no-email",
       username: `${data.first_name || ""} ${data.last_name || ""}`.trim(),
       image: data.image_url,
     };
-
-    switch (type) {
-      case "user.created":
         await User.create(userData);
         console.log("✅ User created:", userData);
         break;
+      }
+        
 
-      case "user.updated":
-        await User.findByIdAndUpdate(data.id, userData);
+      case "user.updated":{
+
+        const userData = {
+      _id: data.id,
+      email : data.email_addresses?.[0]?.email_address || "no-email",
+      username: `${data.first_name || ""} ${data.last_name || ""}`.trim(),
+      image: data.image_url,
+    };
+    await User.findByIdAndUpdate(data.id, userData);
         console.log("📝 User updated:", data.id);
         break;
+      }
+        
 
-      case "user.deleted":
-        await User.findByIdAndDelete(data.id);
+      case "user.deleted":{
+         await User.findByIdAndDelete(data.id);
         console.log("🗑️ User deleted:", data.id);
         break;
+      }
+       
 
       default:
         console.log("ℹ️ Unhandled event type:", type);
