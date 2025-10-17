@@ -4,7 +4,7 @@ import { assets } from "../assets/assets";
 import { useAppContext } from "../context/ApiContext";
 import toast from "react-hot-toast";
 
-const MyBooking = () => {
+const Mybooking = () => {
   const { axios, getToken, user } = useAppContext();
   const [booking, setBooking] = useState([]);
 
@@ -118,4 +118,4 @@ const MyBooking = () => {
   );
 };
 
-export default MyBooking;
+export default Mybooking;

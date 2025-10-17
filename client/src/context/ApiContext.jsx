@@ -22,6 +22,7 @@ export const ApiProvider = ({ children }) => {
     try {
       const {data}=await axios.get('/api/rooms')
         if(data.success){
+          console.log("Rooms response:", data);
             setRooms(data.rooms)
         }else{
             toast.error(data.message)

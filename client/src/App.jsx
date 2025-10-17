@@ -13,7 +13,8 @@ import ListRoom from "./pages/hotelOwner/ListRoom";
 import AddRoom from "./pages/hotelOwner/AddRoom";
 import { Toaster } from "react-hot-toast";
 import { useAppContext } from "./context/ApiContext";
-import MyBooking from "./pages/MyBooking";
+import Mybooking from "./pages/Mybooking";
+
 
 
 
@@ -34,7 +35,7 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/rooms" element={<AllRooms />} />
           <Route path="/rooms/:id" element={<RoomDetails />} />
-          <Route path="/my-booking" element={<MyBooking/>} />
+          <Route path="/my-booking" element={<Mybooking/>} />
           <Route path="/owner" element={<Layout />}>
             <Route index element={<Dashboard />} />
             <Route path="add-room" element={<AddRoom />} />
