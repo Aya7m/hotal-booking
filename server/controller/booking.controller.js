@@ -3,6 +3,7 @@ import transporter from "../config/nodemuler.js"
 import { Booking } from "../model/booking.model.js"
 import { Hotel } from "../model/hotel.model.js"
 import { Room } from "../model/room.model.js"
+import stripe from "stripe"
 
 // check if room is available or not
 // const checkRoomAvailability=async({room,checkInDate,checkOutDate})=>{
@@ -155,3 +156,51 @@ export const getHotelBookings=async(req,res)=>{
     }
 }
     
+
+export const stripePayment=async(req,res)=>{
+    try {
+        
+        const{bookingId}=req.body
+        const booking=await Booking.findById(bookingId)
+        const roomData=await Room.findById(booking.room).populate('hotel')
+        const totalPrice=booking.totalPrice
+        const {origin}=req.headers
+
+        const stripeInstance=new stripe(process.env.STRIPE_SECRET_KEY)
+
+        const line_items=[
+            {
+                price_data:{
+                    currency:'usd',
+                    product_data:{
+                        name:roomData.hotel.name,
+                        images:[roomData.images[0]],
+                    },
+                    unit_amount:totalPrice*100,
+                },
+                
+                quantity:1,
+            }
+        ]
+        // create checkout session
+        const session=await stripeInstance.checkout.sessions.create({
+            payment_method_types:['card'],
+            mode:'payment',
+            line_items,
+            customer_email:req.user.email,
+            metadata:{
+                bookingId
+            },
+            success_url:`${origin}/loader/my-booking`,
+            cancel_url:`${origin}/my-booking`,
+        })
+        res.status(200).json({success:true,url:session.url})
+
+
+
+    } catch (error) {
+        res.status(500).json({success:false,message:error.message})
+         console.log('payment failed',error);
+        
+    }
+}

@@ -19,13 +19,29 @@ const port = process.env.PORT || 3000
 connection_db()
 cloudinartConfig()
 
-app.use(cors({
-  origin: 'https://hotal-booking-frontend.vercel.app', // رابط الـ frontend على Vercel
-  credentials: true
-}));
+
 app.use(express.json())
 
-app.use(clerkMiddleware())
+const allowedOrigins = [
+  'https://hotal-booking-frontend.vercel.app', // production frontend
+  'http://localhost:5173',                     // local dev
+];
+
+app.use(cors({
+  origin: function(origin, callback){
+    if(!origin) return callback(null, true); // السماح للطلبات بدون origin مثل Postman
+    if(allowedOrigins.indexOf(origin) === -1){
+      return callback(new Error('CORS not allowed for this origin'), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true
+}));
+
+app.options('*', cors());
+
+
+// app.use(clerkMiddleware())
 
 app.use('/api/clerk', clerkWebHook)
 
