@@ -9,6 +9,7 @@ import hotelRoute from './routes/hotelRoute.js'
 import { cloudinartConfig } from './config/cloudinart.js'
 import roomRouter from './routes/roomRouter.js'
 import bookingRoute from './routes/bookingRoute.js'
+import { stripeWebHook } from './controller/stripeWebhooks.js'
 
 
 dotenv.config()
@@ -20,14 +21,19 @@ connection_db()
 cloudinartConfig()
 
 app.use(cors())
+
+
+// api to stripe listen webhook
+
+app.post('/api/stripe',express.raw({type:'application/json'}),stripeWebHook)
 app.use(express.json())
 
-app.use(clerkMiddleware())
+// app.use(clerkMiddleware())
 
 app.use('/api/clerk', clerkWebHook)
 
-// // ✅ 3. وبعدين clerkMiddleware
-// app.use(clerkMiddleware())
+// ✅ 3. وبعدين clerkMiddleware
+app.use(clerkMiddleware())
 
 app.get('/', (req, res) => res.send('Hello World!'))
 app.use('/api/user',userRoute)

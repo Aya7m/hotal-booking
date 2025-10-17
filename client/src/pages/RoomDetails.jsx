@@ -51,39 +51,76 @@ const RoomDetails = () => {
   };
 
   // onsubmit handler function to check availability and book room
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      if (!isAvailable) {
-        await checkAvailability();
-        return;
-      } else {
-        const { data } = await axios.post(
-          "/api/booking/book",
-          {
-            room: id,
-            checkInDate,
-            checkOutDate,
-            guests,
-            paymentMethod: "Pay At Hotel",
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${await getToken()}`,
-            },
-          }
-        );
 
-        if (data.success) {
-          toast.success(data.message);
+    try {
+      if (!checkInDate || !checkOutDate) {
+        toast.error("Please select both check-in and check-out dates");
+        return;
+      }
+
+      const inDate = new Date(checkInDate);
+      const outDate = new Date(checkOutDate);
+
+      if (inDate >= outDate) {
+        toast.error("Check-Out date must be after Check-In date");
+        return;
+      }
+
+      // ✅ أول خطوة: نتحقق من توفر الغرفة
+      const { data: checkData } = await axios.post(
+        `/api/booking/check-availability`,
+        {
+          room: id,
+          checkInDate,
+          checkOutDate,
+        }
+      );
+
+      if (!checkData.success) {
+        toast.error(checkData.message);
+        return;
+      }
+
+      if (!checkData.isAvailable) {
+        toast.error("Room is not available for the selected dates");
+        return;
+      }
+
+      // ✅ لو الغرفة متاحة فعلاً نبلغ المستخدم ونكمل الحجز فورًا
+      toast.success("Room is available! Booking now...");
+
+      // ✅ نعمل الحجز فعليًا
+      const { data } = await axios.post(
+        "/api/booking/book",
+        {
+          room: id,
+          checkInDate,
+          checkOutDate,
+          guests,
+          paymentMethod: "Pay At Hotel",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${await getToken()}`,
+          },
+        }
+      );
+
+      if (data.success) {
+        toast.success("Room booked successfully!");
+        setTimeout(() => {
           navigate("/my-booking");
           scrollTo(0, 0);
-        } else {
-          toast.error(data.message);
-        }
+        }, 1000); // ⏱️ تأخير بسيط علشان تشوفي التوست قبل التحويل
+      } else {
+        toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message);
+      console.error(error);
+      toast.error(error.message || "Something went wrong");
     }
   };
 

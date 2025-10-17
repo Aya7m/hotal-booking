@@ -1,31 +1,15 @@
-// import nodemailer from "nodemailer";
-
-// const transporter = nodemailer.createTransport({
-//   host: "smtp-relay.brevo.com",
-//   port: 465,
-//   secure: true,
- 
-//   auth: {
-//     user: process.env.SMTP_USER ,
-//     pass: process.env.SMTP_PASS ,
-//   },
-// });
-
-// export default transporter;
-
-
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
   host: "smtp-relay.brevo.com",
-  port: 465,
-  secure: true,
+  port: 587, // استخدمي 587 مش 465
+  secure: false, // خليه false مع 587
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
   tls: {
-    rejectUnauthorized: false, // تجاهل self-signed certificate
+    rejectUnauthorized: false, // تجاهل التحقق من الشهادة
   },
 });
 
