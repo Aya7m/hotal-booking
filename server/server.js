@@ -19,7 +19,10 @@ const port = process.env.PORT || 3000
 connection_db()
 cloudinartConfig()
 
-app.use(cors())
+app.use(cors({
+  origin: 'https://hotal-booking-frontend.vercel.app', // رابط الـ frontend على Vercel
+  credentials: true
+}));
 app.use(express.json())
 
 app.use(clerkMiddleware())

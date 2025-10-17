@@ -8,7 +8,7 @@ axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
 const ApiContext = createContext();
 
 export const ApiProvider = ({ children }) => {
-  const currency = import.meta.env.VITE_CURENCEY || "EGP";
+  const currency = import.meta.env.VITE_CURENCEY || "$";
   const navigate = useNavigate();
   const { user } = useUser();
   const { getToken } = useAuth();
